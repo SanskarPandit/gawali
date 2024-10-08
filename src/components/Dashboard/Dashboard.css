@@ -1,0 +1,21 @@
+.menuIcon {
+  border: 1px solid white;
+  padding: 2px 5px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto";
+  font-size: 2px;
+}
+::-webkit-scrollbar {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb:vertical {
+  background: transparent;
+  border-radius: 1px;
+}
+.drawer {
+  width: 245px;
+  margin-top: 61px;
+}

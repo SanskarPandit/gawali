@@ -1,0 +1,18 @@
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 6%;
+  margin-left: 10px;
+}
+input {
+  outline: none;
+  border: none;
+  border-bottom: 2px solid #666565;
+  padding: 3px;
+}
+
+.grecaptcha-badge {
+  visibility: hidden;
+  display: none;
+}
