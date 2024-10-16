@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import  { useEffect, useState } from "react";
 import {
   Box,
   AppBar,
@@ -18,28 +18,36 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import tabs from "../../utils/tabs";
 import { useProductsAndPlans } from "../../context/ProductsAndPlansContext";
+import axios from "axios";
 const Products = () => {
  
   const navigate = useNavigate();  
   const [selectedTab, setSelectedTab] = useState(0);
-
+  const [products,setProducts] = useState([])
   const handleTabChange =( newValue: number)=> {
     setSelectedTab(newValue);
   };
-
-  const {productsAndPlans} = useProductsAndPlans()
+  
+  const {productsAndPlans} = useProductsAndPlans();
+  useEffect(()=>{
+    const fetchProducts = async()=>{
+        const {data} = await axios.get('https://milk-backend-v1.onrender.com/getProducts');
+        setProducts(data)
+    }
+    fetchProducts();
+  },[])
   const renderMilkProducts = ()=>(
     <Box style={{ flexWrap: 'wrap', justifyContent: 'center' ,marginTop:20}}>
-    {productsAndPlans.products.length===0?(
+    {products.length===0?(
       <Typography sx={{color:'red'}}>No milk products available</Typography>
     )
-    :(productsAndPlans.products.map((item,index ) => (
+    :(products.map((item,index ) => (
       <Card sx={{ alignItems: 'center', p: 2, m: 1,mt:2,border:'1px solid #E0E0E0'}} elevation={0} key={index}>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={3}>
             <Box
               component='img'
-            src={item.img}
+            src={item.productImage}
               alt="product image"
               sx={{ width: 120, height: 120,}}
             />
@@ -47,35 +55,18 @@ const Products = () => {
           <Grid item xs={6}>
             <Box sx={{ flexDirection: 'column', justifyContent: 'center',ml:5}}>
               <Typography variant="body1" component="div" fontSize={'1.2rem'}>
-                {item.title}
+                {item.productName}
               </Typography>
               <Typography variant="body2" sx={{color:"#686868"}}>
-                {item.descp}
+                {item.productQuality}
               </Typography>
               <Typography variant="body1" fontSize={'1.1rem'}>
-               {item.quantity}
+               {item.productPrice}
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={3} container justifyContent="flex-end">
-            {item.isCurrentPlan ? (
-              <>
-                <Box
-                sx={{ p: '4px', backgroundColor: "#15AD00", color: '#FFFFFF', border: '2px solid #E0E0E0', borderRadius: 1,mb:1 }}
-                >
-                <Typography variant="body1" fontSize={'10px'}>Current Plan</Typography>
-              </Box>
            
-                <Button
-                disableElevation
-                variant="contained"
-                sx={{ p: '4px', backgroundColor: "#EE2727", color: '#FFFFFF', borderColor: '#FFFFFF','&:hover': { backgroundColor: "#EE2727", color: '#FFFFFF', borderColor: '#FFFFFF'},mb:5 }}
-                startIcon={<RemoveIcon sx={{pl:'5px'}}/> }
-              >
-                <Typography variant="body1" sx={{ fontSize: '0.8rem',pr:'4px'}}>Remove</Typography>
-              </Button>
-              </>
-            ) : (
               <Button
                 disableElevation
                 variant="contained"
@@ -84,7 +75,6 @@ const Products = () => {
               >
                 <Typography variant="body1" sx={{ fontSize: '0.9rem' }}>Add</Typography>
               </Button>
-            )}
           </Grid>
         </Grid>
       </Card>)

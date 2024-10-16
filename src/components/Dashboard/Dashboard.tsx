@@ -32,6 +32,7 @@ import { usePersonalDetails } from '../../context/PersonalDetailsContext';
 import { useProductsAndPlans } from "../../context/ProductsAndPlansContext";
 import { usePlan } from "../../context/PlansContext";
 import { useBills } from "../../context/BillsAuthContext";
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -171,6 +172,9 @@ const Dashboard = () => {
           </IconButton>
           <IconButton color="inherit">
             <RefreshIcon />
+          </IconButton>
+          <IconButton color="inherit" onClick={()=>navigate('/admin')}>
+            <SupervisorAccountIcon/>
           </IconButton>
         </Toolbar>
       </AppBar>

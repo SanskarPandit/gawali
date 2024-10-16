@@ -11,7 +11,7 @@ import {
   TextField,
   Stack
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Avatar from '@mui/material/Avatar';
 import profilePic from '../../assets/avatar.jpg'
@@ -19,6 +19,8 @@ import Badge from '@mui/material/Badge';
 import { editIcon } from "../../constants/icons";
 import { styled } from '@mui/material/styles';
 import { usePersonalDetails } from "../../context/PersonalDetailsContext";
+import { useEffect, useState } from "react";
+import axios from "axios";
 // import { useContext } from "react";
 // import UserContext from "../../context/UserContext";
 
