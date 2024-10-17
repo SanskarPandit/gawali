@@ -49,11 +49,13 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 const Admin = () => {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
-  const [openForm,setOpenForm] = useState(false);
+  const [openAddForm,setAddOpenForm] = useState(false);
+  const [openEditForm, setOpenEditForm] = useState(false); 
   const isMobile = useMediaQuery("(max-width:600px)");
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const[addUser,setAddUser] = useState({
+    _id:'',
     firstName:'',
     lastName:'',
     phoneNumber: '',
@@ -72,6 +74,7 @@ const Admin = () => {
   const handleAddUserChange = (e)=>{
     setAddUser({...addUser,[e.target.name]:e.target.value,})
   }
+// Add Form Submit
   const handleUserFormSubmit =(e)=>{
     e.preventDefault();
     axios.post(`https://milk-backend-v1.onrender.com/addUser`,addUser).then((response)=>{
@@ -79,24 +82,46 @@ const Admin = () => {
     }).catch((error)=>{
       console.error(error)
     })
-    setOpenForm(false);
+    setAddOpenForm(false);
   };
+
   const handleIsActiveChange = (event) => {
     setAddUser({ ...addUser, isActive: event.target.checked });
   };
-  const handleClickOpen = () => {
-    setOpenForm(true);
+  
+  const handleAddFormOpen = () => {
+    setAddOpenForm(true);
   };
-  const handleClose = () => {
-    setOpenForm(false);
+  const handleAddFormClose = () => {
+    setAddOpenForm(false);
   };
-  // Fetch users from the API
 
-  // Handle edit and delete actions
-  const handleEdit = (id) => {
-    console.log("Edit user with id:", id);
-    // Add logic to handle edit here
+  const [editUser,setEditUser] = useState({...addUser});
+
+  // Edit Form Submit
+  const handleEditUserFormSubmit = (e) => {
+    e.preventDefault();
+    axios.patch(`https://milk-backend-v1.onrender.com/updateUser/${editUser._id}`,editUser).then((response)=>{
+      console.log("User Edited successfully",response.data);
+      setOpenEditForm(false);
+        // Refresh users after update
+        fetchUsers();
+    }).catch((error)=>{console.error(error);
+    })
   };
+
+  const handleEditUserChange = (e) => {
+    setEditUser({ ...editUser, [e.target.name]: e.target.value });
+  };
+  const handleEditFormOpen = (user) => {
+    setEditUser(user);
+    setOpenEditForm(true)
+    
+  }
+  const handleEditFormClose = () => {
+    setOpenEditForm(false);
+  };
+
 
   const handleDelete = (id) => {
     console.log("Delete user with id:", id);
@@ -111,13 +136,14 @@ const Admin = () => {
     setAnchorEl(null);
   };
 
+
+// Fetching Users
+  const fetchUsers = async()=>{
+    const {data} = await axios.get("https://milk-backend-v1.onrender.com/getUsers");
+    setUsers(data);
+  }
   useEffect(() => {
-    const fetchUsers = async()=>{
-      const {data} = await axios.get("https://milk-backend-v1.onrender.com/getUsers");
-      setUsers(data);
-    }
   fetchUsers();
-     
   }, []);
   
   return (
@@ -168,23 +194,23 @@ const Admin = () => {
           mb: 2, // margin bottom to create space between the icon and the table
         }}
       >
-        <IconButton color="success" onClick={handleClickOpen}>
+        <IconButton color="success" onClick={handleAddFormOpen}>
           <AddIcon /><Typography sx={{fontSize:'18px',ml:1,fontWeight:100}}>Add User</Typography> 
         </IconButton>
       </Box>
 
     {/* Add User Dialog Box */}
     <BootstrapDialog
-        onClose={handleClose}
+        onClose={handleAddFormClose}
         aria-labelledby="customized-dialog-title"
-        open={openForm}
+        open={openAddForm}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
          Add New User
         </DialogTitle>
         <IconButton
           aria-label="close"
-          onClick={handleClose}
+          onClick={handleAddFormClose}
           sx={(theme) => ({
             position: 'absolute',
             right: 8,
@@ -323,7 +349,52 @@ const Admin = () => {
         </DialogActions>
         </form>
       </BootstrapDialog>
-      
+      {/* Edit Form */}
+      <BootstrapDialog
+        onClose={handleEditFormClose}
+        aria-labelledby="customized-dialog-title"
+        open={openEditForm}
+      >
+        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+         Edit Existing User
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleEditFormClose}
+          sx={(theme) => ({
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <CloseIcon />
+        </IconButton>
+        <form onSubmit={handleEditUserFormSubmit}>
+            <DialogContent dividers>
+              <TextField label="First Name" name="firstName" value={editUser.firstName} onChange={handleEditUserChange} fullWidth margin="normal" />
+              <TextField label="Last Name" name="lastName" value={editUser.lastName} onChange={handleEditUserChange} fullWidth margin="normal" />
+              <TextField label="Phone Number" name="phoneNumber" value={editUser.phoneNumber} onChange={handleEditUserChange} fullWidth margin="normal" type="number" />
+              <TextField label="Alt Phone Number" name="altPhoneNumber" value={editUser.altPhoneNumber} onChange={handleEditUserChange} fullWidth margin="normal" type="number" />
+              <TextField label="Email" name="email" value={editUser.email} onChange={handleEditUserChange} fullWidth margin="normal" type="email" />
+              <TextField label="Flat No" name="flatNo" value={editUser.flatNo} onChange={handleEditUserChange} fullWidth margin="normal" />
+              <TextField label="Colony" name="colony" value={editUser.colony} onChange={handleEditUserChange} fullWidth margin="normal" />
+              <TextField label="Landmark" name="landmark" value={editUser.landmark} onChange={handleEditUserChange  } fullWidth margin="normal" />
+              <TextField label="City" name="city" value={editUser.city} onChange={handleEditUserChange} fullWidth margin="normal" />
+              <TextField label="Locality" name="locality" value={editUser.locality} onChange={handleEditUserChange} fullWidth margin="normal" />  
+              <TextField label="Profile Image" name="profileImage" value={editUser.profileImage} onChange={handleEditUserChange} fullWidth margin="normal" />
+              <FormControlLabel control={<Switch checked={editUser.isActive} onChange={(e) => setEditUser({ ...editUser, isActive: e.target.checked })} />} label="Is Active" />
+            </DialogContent>
+            <DialogActions>
+              <Button autoFocus onClick={handleEditFormClose}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="contained" color="primary">
+                Update User
+              </Button>
+            </DialogActions>
+          </form>
+          </BootstrapDialog>
 
       {/* Table Component */}
       <TableContainer component={Paper} sx={{ width: "100%", overflowX: "auto" }}>
@@ -375,13 +446,13 @@ const Admin = () => {
                 <TableCell>
                   <IconButton
                     color="primary"
-                    onClick={() => handleEdit(user.id)}
+                    onClick={() => handleEditFormOpen(user)}
                   >
                     <EditIcon />
                   </IconButton>
                   <IconButton
                     color="secondary"
-                    onClick={() => handleDelete(user.id)}
+                    onClick={() => handleDelete(user)}
                   >
                     <DeleteIcon />
                   </IconButton>
