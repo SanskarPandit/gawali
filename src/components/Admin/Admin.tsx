@@ -122,35 +122,43 @@ const Admin = () => {
   
   return (
     <>
-    <CssBaseline />
-    <AppBar
-      position="fixed"
+   <CssBaseline />
+<AppBar
+  position="fixed"
+  sx={{
+    backgroundColor: "#0019A5",
+    zIndex: (theme) => theme.zIndex.drawer + 1,
+  }}
+>
+  <Toolbar sx={{ position: "relative" }}>
+    <IconButton
+      edge="start"
+      color="inherit"
+      onClick={() => navigate('/dashboard')}
+    >
+      <ArrowBackSharp />
+    </IconButton>
+    <Typography sx={{ fontSize: '18px', ml: 1, fontWeight: 100 }}>
+      Go Back
+    </Typography>
+
+    <Typography
+      variant="body1"
+      noWrap
       sx={{
-        backgroundColor: "#0019A5",
-        zIndex: (theme) => theme.zIndex.drawer + 1,
+        position: "absolute",
+        left: 0,
+        right: 0,
+        margin: "auto",
+        textAlign: "center",
+        fontSize: "22px",
+        fontWeight: 100,
       }}
     >
-      <Toolbar >
-       
-          <IconButton
-            edge="start"
-            color="inherit" 
-            sx={{ display: "flex", alignItems: "center",justifyContent:'center',}}
-            onClick={()=>navigate('/dashboard')}
-          >
-              <ArrowBackSharp   />
-              <Typography sx={{fontSize:'18px',ml:1,fontWeight:100}}>Go Back</Typography> 
-          </IconButton>
-    
-        <Typography
-          variant="body1"
-          noWrap
-          sx={{fontSize: "25px", fontWeight: 100,display:'flex',flexGrow:1,justifyContent:'center',alignItems:'center'}}
-        >
-          Admin
-        </Typography>
-      </Toolbar>
-    </AppBar>
+      Admin
+    </Typography>
+  </Toolbar>
+</AppBar>
     <Box sx={{ position: "relative" ,p:6,mt:5}}>
       {/* Add Icon in the top-right corner */}
       <Box
